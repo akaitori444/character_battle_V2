@@ -137,6 +137,7 @@ $Access_power_input = $_POST["Access_power_input"];
           <input type="hidden" name="Access_power2" value="<?=$Access_power?>">
           <!--PLステータス-->
           <input type="hidden" name="battle_command" value="0">
+          <input type="hidden" name="heel_item" value='2'>
           <input type="hidden" name="file_path" value="<?=$file_path_input?>">
           <input type="hidden" name="pl_name" value="<?=$pl_name_input?>">
           <input type="hidden" name="attack" value="<?=$attack_input?>">

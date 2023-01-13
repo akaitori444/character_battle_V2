@@ -122,6 +122,47 @@
               <option value="6">6</option>
             </select>
           </div>
+          <h1>シンボル</h1>
+          <div class="side_line">
+            <select name="symbol">
+              <option value="1" selected>戦士</option>
+              <option value="2">衛兵</option>
+              <option value="3">忍者</option>
+              <option value="4">狙撃手</option>
+              <option value="5">魔術師</option>
+              <option value="6">探偵</option>
+              <option value="7">アイドル</option>
+              <option value="8">技師</option>
+            </select>
+          </div>
+          <h1>アイテム</h1>
+          <div class="side_line">
+            <select name="item">
+              <option value="1" selected>おまもり</option>
+              <option value="2">近接武器</option>
+              <option value="3">遠隔武器</option>
+              <option value="4">魔導武器</option>
+              <option value="5">情報端末</option>
+              <option value="6">身代り</option>
+              <option value="7">薬品</option>
+              <option value="8">厄払いの面</option>
+              <option value="9">活力剤</option>
+              <option value="10">従者</option>
+            </select>
+          </div>
+          <div>
+            アイテム名: <input type="text" name="name">
+            <div>
+            <textarea
+              name="caption"
+              placeholder="アイテム説明(140文字以下)"
+              id="caption"
+            ></textarea>
+            </div>
+          </div>
+          </div>
+          
+
           <div>
             <button>作成</button>
           </div>

@@ -1,72 +1,4 @@
 <?php
-/*
-function dbc()
-{
-    $host = "localhost";
-    $dbname = "gsy_d03_04";
-    $user = "root";
-    $pass = "root";
-
-    $dns = "myspl:host=$host;
-    dbname=$dbname;charset=utf8";
-    try{
-    $pdo = new PDO($dns, $user, $pass,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]);
-        echo '成功!';
-        return $pdo;
-    }catch(PDOException $e){
-        echo "接続に失敗しました\n";
-        exit($e->getMessage());
-    }
-}
-
-dbc();
-
- // POSTデータ確認
-$dbn ='mysql:dbname=gsy_d03_04;charset=utf8mb4;port=3306;host=localhost';
-$user = 'root';
-$pwd = '';
-
- // DB接続
-try {
-  $pdo = new PDO($dbn, $user, $pwd);
-  echo '成功!';
-} catch (PDOException $e) {
-  echo json_encode(["db error" => "{$e->getMessage()}"]);
-  echo "接続に失敗しました\n";
-  exit();
-}
-*/
-
-/*
-function dbc()
-{
-    // POSTデータ確認
-    $dbn ='mysql:dbname=gsy_d03_04;charset=utf8mb4;port=3306;host=localhost';
-
-    $user = 'root';
-    $pwd = '';
-
-    // DB接続
-    try {
-    $pdo = new PDO($dbn, $user, $pwd,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]);
-    //echo "接続に成功しました！\n";
-    } catch (PDOException $e) {
-    echo json_encode(["db error" => "{$e->getMessage()}"]);
-    echo "接続に失敗しました\n";
-    exit();
-    }
-}
-
-//dbc();
-*/
 /*-------------------------------------------------------------------------------*/
 /**
 * ファイルデータを保存
@@ -128,16 +60,18 @@ function fileSave($filename, $save_path, $caption, $pl_name, $attack, $toughness
 
 /*-------------------------------------------------------------------------------*/
 // DB接続
-$dbn ='mysql:dbname=gsy_d03_04;charset=utf8mb4;port=3306;host=localhost';
-$user = 'root';
-$pwd = '';
-
-try {
-  $pdo = new PDO($dbn, $user, $pwd);
-} catch (PDOException $e) {
-  echo json_encode(["db error" => "{$e->getMessage()}"]);
-  exit();
+function connect_file()
+{
+    $dbn ='mysql:dbname=gsy_d03_04;charset=utf8mb4;port=3306;host=localhost';
+    $user = 'root';
+    $pwd = '';
+  try {
+    return new PDO($dbn, $user, $pwd);
+  } catch (PDOException $e) {
+    exit('dbError:'.$e->getMessage());
+  }
 }
+$pdo = connect_file();
 
 $sql = 'SELECT * FROM character_status';
 $stmt = $pdo->prepare($sql);

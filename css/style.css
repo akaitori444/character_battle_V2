@@ -111,7 +111,7 @@ button:active{
     flex-direction: column;
     width: 600px;
     height: 460px;
-    background-color: red;
+    background-image: url(../images/digital_field.png);
 }
 .msg_window{
     width: 600px;
@@ -129,8 +129,7 @@ button:active{
 }
 
 .vs{
-    width: 120px;
-    height: 120px;
+
     margin: 10px;
 }
 

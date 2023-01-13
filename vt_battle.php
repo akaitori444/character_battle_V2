@@ -6,10 +6,14 @@ var_dump($_POST);
 echo('</pre>');
 exit();
 */
+if($_POST["battle_command"] == 9)
+{
+  header("location: character_list.php");
+}
 //-------------------------------------------------------//
 //PL
 $pl_name = $_POST["pl_name"];
-$file_path = $_POST["file_path"];
+$file_path1 = $_POST["file_path"];
 //スペック
 $attack = $_POST["attack"];
 $toughness = $_POST["toughness"];
@@ -18,6 +22,7 @@ $technic = $_POST["technic"];
 $imagination = $_POST["imagination"];
 $chase = $_POST["chase"];
 $Access_power = $_POST["Access_power"];
+$heel_item = $_POST["heel_item"];
 //ステータス
 $pl_hp_set = $toughness * 2 + 6 ;
 $pl_critical = $technic * 3 ;
@@ -48,9 +53,13 @@ if($Access_power2 < $pl_battle2){$pl_battle2 = $Access_power2;}
 $pl_search2 = ($technic2 + $imagination2 + $chase2) * 6;
 if($Access_power2 < $pl_search2){$pl_search2 = $Access_power2;}
 //-------------------------------------------------------//
-
+//メッセージ定義
 $msg = ' ';
 $msg1 = ' ';
+$msg2 = ' ';
+//-------------------------------------------------------//
+//ダメージ計算
+
 $damage = rand(1,$attack);
 //echo 'PL通常攻撃威力は', ' ', $damage, '<br />';
 $damage1 = rand(1,$attack) + rand(1,6);
@@ -59,90 +68,164 @@ $damage2 = rand(1,$attack)*2;
 //echo 'PLスキル攻撃威力は', ' ', $damage2, '<br />';
 $damage3 = rand(1,$attack)*2 + rand(1,6);
 //echo 'PLスキルクリティカル攻撃威力は', ' ', $damage3, '<br />';
-$enemy_damage = rand(1,$attack2);
-//echo '敵ダメージ量は', ' ', $enemy_damage, '<br />';
-$dice = rand(1,100);
-//echo 'ダイス目は', ' ', $dice, '<br />';
+$enemy_damage1 = rand(1,$attack2);
+//echo '敵ダメージ量は', ' ', $enemy_damage1, '<br />';
+$enemy_damage2 = rand(1,$attack2) + rand(1,6);
+//echo '敵ダメージ量は', ' ', $enemy_damage1, '<br />';
+$dice_1 = rand(1,100);
+//echo 'ダイス目は', ' ', $dice_1, '<br />';
+$dice_2 = rand(1,100);
+//echo 'ダイス目は', ' ', $dice_2, '<br />';
 //echo '行動判定は', ' ', $_POST["battle_command"], '<br />';
-if($dice <= $pl_critical){
-  $attack_result = 2;
+
+//PLダイス判定
+if($dice_1 <= $pl_critical){
+  $attack_result_1 = 2;
   //echo '判定クリティカル成功', '<br />';
-}elseif($dice <= $Access_power){
-  $attack_result = 1;
+}elseif($dice_1 <= $Access_power){
+  $attack_result_1 = 1;
   //echo '判定成功', '<br />';
 }else{
-  $attack_result = 0;
+  $attack_result_1 = 0;
   //echo '判定失敗', '<br />';
 }
 
-if($_POST["battle_command"] == 0){
+//調査ダイス判定
+if($dice_1 <= $pl_critical){
+  $search_result = 2;
+  //echo '判定クリティカル成功', '<br />';
+}elseif($dice_1 <= $pl_search){
+  $search_result = 1;
+  //echo '判定成功', '<br />';
+}else{
+  $search_result = 0;
+  //echo '判定失敗', '<br />';
+}
+
+//NPCダイス判定
+if($dice_2 <= $pl_critical2){
+  $attack_result_2 = 2;
+  //echo '判定クリティカル成功', '<br />';
+}elseif($dice_2 <= $Access_power2){
+  $attack_result_2 = 1;
+  //echo '判定成功', '<br />';
+}else{
+  $attack_result_2 = 0;
+  //echo '判定失敗', '<br />';
+}
+
+
+
+/*-------------------------------------------------------------------------*/
+//PLの攻撃判定＆敵のHP
+if($_POST["battle_command"] == 0){ //戦闘前
   $enemy_hp = $enemy_hp_set;
-  $pl_hp = $pl_hp_set;
+  $enemy_Access = $Access_power2;
   $msg = 'バトル開始だ！';
   $msg1 = '行動選択して戦おう';
 }elseif($_POST["battle_command"] == 1){ //近接攻撃
-  if($attack_result == 1){
+  if($attack_result_1 == 1){
     $enemy_hp = $_POST["enemy_hp"] - $damage;
     $msg = "近接攻撃！ $damage のダメージ！";
-  }elseif($attack_result == 2){
+  }elseif($attack_result_1 == 2){
     $enemy_hp = $_POST["enemy_hp"] - $damage1;
     $msg = "近接クリティカル攻撃！ $damage1 の大ダメージ！";
-  }elseif($attack_result == 0){
+  }elseif($attack_result_1 == 0){
     $enemy_hp = $_POST["enemy_hp"];
     $msg = "攻撃失敗…";
   }
-  $pl_hp = $_POST["pl_hp"] - $enemy_damage;
-  $msg1 = "敵からの反撃！ $enemy_damage のダメージ！";
-
+  $enemy_Access = $_POST["Access_power2"];
 }elseif($_POST["battle_command"] == 2){ //スキルによる攻撃
-  if($attack_result == 1){
+  if($attack_result_1 == 1){
     $enemy_hp = $_POST["enemy_hp"] - $damage2;
     $Access_power = $_POST["Access_power"] - 10;
     $msg = "スキル攻撃！ $damage2 のダメージ！";
-  }elseif($attack_result == 2){
+  }elseif($attack_result_1 == 2){
     $enemy_hp = $_POST["enemy_hp"] - $damage3;
     $Access_power = $_POST["Access_power"] - 10;
     $msg = "スキルクリティカル攻撃！ $damage3 の大ダメージ！";
-  }elseif($attack_result == 0){
+  }elseif($attack_result_1 == 0){
     $enemy_hp = $_POST["enemy_hp"];
     $msg = "攻撃失敗…";
   }
-  $pl_hp = $_POST["pl_hp"] - $enemy_damage;
-  $msg1 = "敵からの反撃！ $enemy_damage のダメージ！";
-
+  $enemy_Access = $_POST["Access_power2"];
 }elseif($_POST["battle_command"] == 3){ //調査
-  if($attack_result == 1){
-    $enemy_hp = $_POST["enemy_hp"] - $damage2;
-    $msg = "スキル攻撃！ $damage2 のダメージ！";
-  }elseif($attack_result == 2){
-    $enemy_hp = $_POST["enemy_hp"] - $damage3;
-    $msg = "スキルクリティカル攻撃！ $damage3 の大ダメージ！";
-  }elseif($attack_result == 0){
-    $enemy_hp = $_POST["enemy_hp"];
-    $msg = "攻撃失敗…";
+  if($search_result == 1){
+    $enemy_Access = $_POST["Access_power2"] - 2*$damage2;
+    $msg = "調査！ 解析が進んだ";
+  }elseif($search_result == 2){
+    $enemy_Access = $_POST["Access_power2"] - 5*$damage3;
+    $msg = "調査クリティカル！ とても解析が進んだ";
+  }elseif($search_result == 0){
+    $enemy_Access = $_POST["Access_power2"];
+    $msg = "調査失敗…";
   }
-  $pl_hp = $_POST["pl_hp"] - $enemy_damage;
-  $msg1 = "敵からの反撃！ $enemy_damage のダメージ！";
-}elseif($_POST["battle_command"] == 4){ //スキルによる攻撃
   $enemy_hp = $_POST["enemy_hp"];
-  $msg = "なにもしない";
-  $pl_hp = $_POST["pl_hp"] - $enemy_damage;
-  $msg1 = "敵からの反撃！ $enemy_damage のダメージ！";}
+  $pl_hp = $_POST["pl_hp"] - $enemy_damage1;
+  $msg1 = "敵からの反撃！ $enemy_damage1 のダメージ！";
+} elseif ($_POST["battle_command"] == 4) { //待機
+  $enemy_hp = $_POST["enemy_hp"];
+  $enemy_Access = $_POST["Access_power2"];
+  $msg = "なにもせずに様子を伺う";
+}elseif ($_POST["battle_command"] == 5) { //回復アイテムを使う
+  $enemy_hp = $_POST["enemy_hp"];
+  $enemy_Access = $_POST["Access_power2"];
+  $msg = "回復薬を使った";
+}
+/*-------------------------------------------------------------------------*/
+//敵の攻撃判定＆PLのHP
+if ($_POST["battle_command"] == 0) { //戦闘前
+  $pl_hp = $pl_hp_set;
+} elseif ($_POST["battle_command"] == 5) {//回復アイテムを使う
+  $pl_hp = $pl_hp_set;
+  $heel_item--;
+  $msg1 = "体力が最大まで回復した";
+}
+else{
+  if($attack_result_2 == 1){
+    $pl_hp = $_POST["pl_hp"] - $enemy_damage1;
+    $msg1 = "敵からの反撃！ $enemy_damage1 のダメージ！";
+    }elseif($attack_result_2 == 2){
+    $pl_hp = $_POST["pl_hp"] - $enemy_damage2;
+    $msg1 = "敵からのクリティカル反撃！ $enemy_damage2 の大ダメージ！";
+  }elseif($attack_result_2 == 0){
+    $pl_hp = $_POST["pl_hp"];
+    $msg1 = "敵からの攻撃をかわした！！";
+  }
+}
+/*-------------------------------------------------------------------------*/
 
+//PLのHP管理
 if($pl_hp > 0){
-  $pl_images = $file_path;
+  $pl_images = $file_path1;
 }elseif($pl_hp <= 0){
   $msg = 'HPがなくなった。';
   $msg1 = '戦闘終了だ。';
   $pl_images = 'images/loose.png';
 }
-if($enemy_hp > 0){
+//NPCのHP管理
+if($enemy_hp > 0 & $enemy_Access > 0){
   $enemy_images = $file_path2;
 }elseif($enemy_hp <= 0){
   $msg = '敵を倒した。';
   $msg1 = '戦闘終了だ。';
   $enemy_images = 'images/loose.png';
+}elseif($enemy_Access <= 0){
+  $msg = '解析完了';
+  $msg1 = '無力化に成功した。';
+  $enemy_images = 'images/search_out.png';
 }
+
+//終了フラグ
+if($enemy_hp <= 0 || $enemy_Access <= 0) {
+  $endflag = 1;
+}elseif($pl_hp <= 0 || $Access_power <= 0){
+  $endflag = 1;
+}
+else{
+  $endflag = 2;
+}
+
 
 ?>
 
@@ -160,15 +243,32 @@ if($enemy_hp > 0){
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <!--CSS-->
   <!--リセットCSS-->
-  <link rel="canonical" href="#">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
   <link rel="stylesheet" type="text/css" href="css/reset.css"/>
   <link rel="stylesheet" type="text/css" href="css/style.css"/>
 </head>
 
 <body>
   <div class="window">
+    <!--ステータス一覧-->
     <div class="pl_information">
+      <!--NPCステータス-->
+      <h1>NPCステータス</h1>
+      <div class="status">
+        <p>キャラクター名: <?=$enemy_name?></p>
+        <p>【こうげき】: <?=$attack2?></p>
+        <p>【たふねす】: <?=$toughness2?></p>
+        <p>【すばやさ】: <?=$speed2?></p>
+        <p>【きようさ】: <?=$technic2?></p>
+        <p>【そうぞう】: <?=$imagination2?></p>
+        <p>【ついせき】: <?=$chase2?></p>
+        <p>接続率 : <?=$Access_power2?>%</p>
+        <p>会心率 : <?=$pl_critical2?>%</p>
+        <p>速度 : <?=$pl_round2?></p>
+        <p>通常攻撃成功率 : <?=$pl_battle2?>%</p>
+        <p>(攻撃力 : 1d<?=$attack2?>)</p>
+        <p>調査成功率 : <?=$pl_search2?>%</p>
+
+      </div>
       <!--ステータス-->
       <h1>PLステータス</h1>
       <div class="status">
@@ -186,50 +286,8 @@ if($enemy_hp > 0){
         <p>(攻撃力 : 1d<?=$attack?>)</p>
         <p>調査成功率 : <?=$pl_search?>%</p>
       </div>
-      <!--コマンド選択バー-->
-      <div class="command_choice">
-        <form method="POST">
-          <fieldset>
-            <legend>コマンド入力</legend>
-            <div class="side_line">
-              <!--PL隠しデータ-->
-              <input type="hidden" name="pl_name" value="<?=$pl_name?>">
-              <input type="hidden" name="file_path" value="<?=$file_path?>">
-              <input type="hidden" name="pl_hp" value="<?=$pl_hp?>">
-              <input type="hidden" name="Access_power" value="<?=$Access_power?>">
-              <input type="hidden" name="attack" value="<?=$attack?>">
-              <input type="hidden" name="toughness" value="<?=$toughness?>">
-              <input type="hidden" name="speed" value="<?=$speed?>">
-              <input type="hidden" name="technic" value="<?=$technic?>">
-              <input type="hidden" name="imagination" value="<?=$imagination?>">
-              <input type="hidden" name="chase" value="<?=$chase?>">
-              <!--NPC隠しデータ-->
-              <input type="hidden" name="enemy_name" value="<?=$enemy_name?>">
-              <input type="hidden" name="enemy_hp" value="<?=$enemy_hp?>">
-              <input type="hidden" name="file_path2" value="<?=$file_path2?>">
-              <input type="hidden" name="Access_power2" value="<?=$Access_power2?>">
-              <input type="hidden" name="attack2" value="<?=$attack2?>">
-              <input type="hidden" name="toughness2" value="<?=$toughness2?>">
-              <input type="hidden" name="speed2" value="<?=$speed2?>">
-              <input type="hidden" name="technic2" value="<?=$technic2?>">
-              <input type="hidden" name="imagination2" value="<?=$imagination2?>">
-              <input type="hidden" name="chase2" value="<?=$chase2?>">
-              <!--選択-->
-              <select name="battle_command">
-                <option value="1">近接攻撃</option>
-                <option value="2">スキルによる攻撃</option>
-                <option value="3">調査する</option>
-                <option value="4" selected>待機</option>
-              </select>
-            </div>
-            <div>
-              <button>選択</button>
-            </div>
-          </fieldset>
-          <a href="character_list.php">キャラクターリスト</a>
-        </form>
-      </div>
     </div>
+    <!--戦闘画面-->
     <div class="gm_information">
       <div class="main_window">
         <div>戦闘画面</div>
@@ -244,12 +302,20 @@ if($enemy_hp > 0){
                   value="<?=$enemy_hp?>">
                 at <?=$enemy_hp?>/<?=$enemy_hp_set?>
           </meter>
+          <p><?=$enemy_name?>の接続率 : <?=$enemy_Access?>%</p>
+          <!--
+          <meter id="fuel"
+                min="0" max="<?=$Access_power2?>"
+                value="<?=$enemy_Access?>">
+              at <?=$enemy_Access?>/<?=$Access_power2?>
+          </meter>
+          -->
         </div>
         <div class="vs">VS</div>
         <!--敵画面-->
         <div class="straight_line">
           <div class="battlefield">
-            <img src="<?=$file_path?>" alt="PLサンプル" width="100" height="100">
+            <img src="<?=$pl_images?>" alt="PLサンプル" width="100" height="100">
           </div>
           <p><?=$pl_name?>のHP : <?=$pl_hp?></p>
           <meter id="fuel"
@@ -257,14 +323,72 @@ if($enemy_hp > 0){
                 value="<?=$pl_hp?>">
               at <?=$pl_hp?>/<?=$pl_hp_set?>
           </meter>
+          <p><?=$pl_name?>の接続率 : <?=$Access_power?>%</p>
+          <!--
+          <meter id="fuel"
+                min="0" max="<?=$Access_power?>"
+                value="<?=$Access_power?>">
+              at <?=$Access_power?>/<?=$Access_power?>
+          </meter>
+          -->
         </div>
       </div>
       <div class="msg_window">
         <div>メッセージ</div>
         <div><?=$msg?></div>
         <div><?=$msg1?></div>
+        <div><?=$msg2?></div>
       </div>    
     </div>
+    <!--コマンド選択バー-->
+    <div class="command_choice">
+      <div class="pl_information">
+        <form method="POST">
+            <legend>コマンド入力</legend>
+            <div class="side_line">
+              <!--PL隠しデータ-->
+              <input type="hidden" name="pl_name" value="<?=$pl_name?>">
+              <input type="hidden" name="file_path" value="<?=$file_path1?>">
+              <input type="hidden" name="pl_hp" value="<?=$pl_hp?>">
+              <input type="hidden" name="Access_power" value="<?=$Access_power?>">
+              <input type="hidden" name="attack" value="<?=$attack?>">
+              <input type="hidden" name="toughness" value="<?=$toughness?>">
+              <input type="hidden" name="speed" value="<?=$speed?>">
+              <input type="hidden" name="technic" value="<?=$technic?>">
+              <input type="hidden" name="imagination" value="<?=$imagination?>">
+              <input type="hidden" name="chase" value="<?=$chase?>">
+              <!--NPC隠しデータ-->
+              <input type="hidden" name="enemy_name" value="<?=$enemy_name?>">
+              <input type="hidden" name="enemy_hp" value="<?=$enemy_hp?>">
+              <input type="hidden" name="file_path2" value="<?=$file_path2?>">
+              <input type="hidden" name="Access_power2" value="<?=$enemy_Access?>">
+              <input type="hidden" name="attack2" value="<?=$attack2?>">
+              <input type="hidden" name="toughness2" value="<?=$toughness2?>">
+              <input type="hidden" name="speed2" value="<?=$speed2?>">
+              <input type="hidden" name="technic2" value="<?=$technic2?>">
+              <input type="hidden" name="imagination2" value="<?=$imagination2?>">
+              <input type="hidden" name="chase2" value="<?=$chase2?>">
+              <input type="hidden" name="heel_item" value="<?=$heel_item?>">
+            </div>
+            <div>
+              <!--選択-->
+              <?php if($endflag == 2){ ?>
+              <button name="battle_command" value="1">近接攻撃</button>
+              <button name="battle_command" value="2">スキル攻撃</button>
+              <button name="battle_command" value="3">調査</button>
+              <button name="battle_command" value="4">待機</button>
+              <p>回復アイテム残数 : <?=$heel_item?></p>
+              <?php if($heel_item != 0){ ?>
+              <button name="battle_command" value="5">回復する</button>
+              <?php } ?>
+              <?php } ?>
+              <button name="battle_command" value="9">リストへ戻る</button>
+            </div>
+        </form>
+      </div>
+
+    </div>
+
   </div>
 </body>
 

@@ -1,7 +1,9 @@
 <?php
 require_once "./dbc.php";
+//require_once "./function.php";
 //var_dump($result);
 //exit();
+
 ?>
 
 <!DOCTYPE html>
@@ -38,6 +40,9 @@ require_once "./dbc.php";
           <th>【きようさ】</th>
           <th>【そうぞう】</th>
           <th>【ついせき】</th>
+          <th>選ぶ</th>
+          <th>編集</th>
+          <th>削除</th>
         </tr>
       </thead>
       <tbody>
@@ -45,6 +50,7 @@ require_once "./dbc.php";
           <?php
           //-------------------------------------------------------//
           //接続率計算
+          
           if($record["attack"] > 3){
             $attack_count = $record["attack"] * 2 - 3;
           }else{
@@ -78,6 +84,7 @@ require_once "./dbc.php";
           $Access_count = $attack_count + $toughness_count + $speed_count + $technic_count + $imagination_count + $chase_count;
           $Access_power = 100 - $Access_count;
           //-------------------------------------------------------//
+          //echo Access_power($record);
           ?>
           <tr>
           <form enctype="multipart/form-data" action="./enemy_list.php" method="POST">
@@ -91,6 +98,8 @@ require_once "./dbc.php";
           <td><?php echo $record["imagination"] ?></td>
           <td><?php echo $record["chase"] ?></td>
           <td><div><button>バトルを行う</button></div></td>
+          <td><a href='character_edit.php?id={$record["id"]}'>edit</a></td>
+          <td><a href='character_delete.php?id={$record["id"]}'>delete</a></td>
           <td><?php 
           $pl_name = $record["pl_name"];
           $file_path = $record["file_path"];
